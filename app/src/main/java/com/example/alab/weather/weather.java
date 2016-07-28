@@ -2,6 +2,7 @@ package com.example.alab.weather;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -20,12 +21,15 @@ import org.xml.sax.SAXException;
 
 public class weather extends AppCompatActivity {
     List<String> weatherStatus = new ArrayList<>();
+    List<String> tempStatus = new ArrayList<>();
+    ImageView image;
     TextView text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
-        text = (TextView) findViewById(R.id.tv);
+        image = (ImageView) findViewById(R.id.weather);
+        text = (TextView) findViewById(R.id.temp);
 
         final weather weatherActivity = this;
 
@@ -43,7 +47,21 @@ public class weather extends AppCompatActivity {
                             weatherActivity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    text.setText(weatherStatus.get(0));
+                                    if(weatherStatus.get(0).equals("Mostly Cloudy")){
+                                        image.setImageResource(R.drawable.cloud4);
+                                    } else if(weatherStatus.get(0).equals("Rain")){
+                                        image.setImageResource(R.drawable.rain);
+                                    }else if(weatherStatus.get(0).equals("Cloudy")){
+                                        image.setImageResource(R.drawable.cloud3);
+                                    }else if(weatherStatus.get(0).equals("Clear")){
+                                        image.setImageResource(R.drawable.sunny);
+                                    }else if(weatherStatus.get(0).equals("Partly cloudy")){
+                                        image.setImageResource(R.drawable.littlecloud);
+                                    }else if(weatherStatus.get(0).equals("Snow/Rain")){
+                                        image.setImageResource(R.drawable.rainsnow);
+                                    }else
+                                        image.setImageResource(R.drawable.snow);
+                                    text.setText("Temperature" + " : " + tempStatus.get(0));
                                 }
                             });
                         } catch (SAXException e) {
@@ -77,6 +95,9 @@ public class weather extends AppCompatActivity {
                     if(list.item(i).getChildNodes().item(k).getNodeType() == Node.ELEMENT_NODE){
                         if (list.item(i).getChildNodes().item(k).getNodeName().compareTo("wfEn") == 0) {
                             weatherStatus.add(list.item(i).getChildNodes().item(k).getTextContent());
+                        }
+                        if(list.item(i).getChildNodes().item(k).getNodeName().compareTo("temp") == 0){
+                            tempStatus.add(list.item(i).getChildNodes().item(k).getTextContent());
                         }
                     }
                 }
